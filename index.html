@@ -84,21 +84,11 @@
         }
 
         .bio-flex { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
-        
-        /* Estilo para a imagem de Howard Gardner (placeholder) */
         .bio-img { 
             width: 100px; height: 100px; border-radius: 50%; 
             background: #cbd5e0; flex-shrink: 0; overflow: hidden;
             display: flex; align-items: center; justify-content: center;
             font-size: 2rem; color: #fff; background: linear-gradient(45deg, #667eea, #764ba2);
-        }
-
-        /* Estilo para a SUA FOTO na página inicial */
-        .creator-main-img {
-            width: 100px; height: 100px; border-radius: 50%;
-            object-fit: cover; border: 4px solid var(--accent);
-            flex-shrink: 0;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
         
         .theory-title {
@@ -135,22 +125,12 @@
             justify-content: center; align-items: center;
         }
         .auth-box {
-            background: white; padding: 30px; width: 90%; max-width: 400px;
+            background: white; padding: 40px; width: 90%; max-width: 400px;
             border-radius: 24px; text-align: center; position: relative;
             box-shadow: 0 20px 50px rgba(0,0,0,0.4);
             animation: slideUp 0.4s ease;
-            max-height: 90vh; overflow-y: auto;
         }
         .auth-box h3 { font-family: 'Fredoka', sans-serif; margin-top: 0; font-size: 2rem; color: var(--accent); }
-        
-        /* Estilos do Link do Instagram */
-        .creator-insta { 
-            text-decoration: none; color: #E1306C; font-weight: 600; font-size: 1rem;
-            display: inline-flex; align-items: center; gap: 5px; margin-top: 8px;
-            transition: transform 0.2s;
-        }
-        .creator-insta:hover { transform: scale(1.05); }
-
         .input-group { margin-bottom: 15px; text-align: left; }
         .input-group label { display: block; font-size: 0.9rem; color: #718096; margin-bottom: 5px; font-weight: 600; }
         .input-group input { 
@@ -166,6 +146,7 @@
         }
         .btn-auth:hover { background: var(--primary); }
         
+        /* Container do Botão Google */
         #google-btn-container { margin-top: 15px; display: flex; justify-content: center; }
 
         .toggle-auth { margin-top: 20px; font-size: 0.9rem; cursor: pointer; color: var(--primary); text-decoration: underline; }
@@ -309,7 +290,7 @@
                 </div>
                 <button class="btn-auth" onclick="doLogin()">Entrar</button>
                 
-                <!-- BOTÃO DO GOOGLE -->
+                <!-- BOTÃO DO GOOGLE (RENDERIZADO VIA JS) -->
                 <div id="google-btn-container"></div>
 
                 <div class="toggle-auth" onclick="toggleForms('register')">Não tem conta? Cadastre-se</div>
@@ -343,8 +324,6 @@
                 <h1>Múltiplas<br>Inteligências</h1>
                 <h2>Descubra o potencial da sua mente</h2>
             </header>
-
-            <!-- CARD TEORIA -->
             <div class="content-card">
                 <div class="theory-title">🧠 A Teoria</div>
                 <p>Tudo começou com <strong>Alfred Binet</strong> em 1900, que criou testes para medir o "g" (inteligência geral). Mas a mente humana é muito mais complexa que um número.</p>
@@ -360,8 +339,6 @@
                     <div class="intel-tag">🌿 Naturalista</div>
                 </div>
             </div>
-
-            <!-- CARD HOWARD GARDNER -->
             <div class="content-card">
                 <div class="theory-title">🎓 Sobre o Autor</div>
                 <div class="bio-flex">
@@ -371,26 +348,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- CARD SOBRE O CRIADOR (NOVA SEÇÃO) -->
-            <div class="content-card">
-                <div class="theory-title">💻 Sobre o Criador</div>
-                <div class="bio-flex">
-                    <!-- FOTO DO CRIADOR NO GITHUB -->
-                    <img src="foto-marcus.png.jpg" alt="Marcus Vinicius" class="creator-main-img">
-                    <div>
-                        <p style="margin-bottom: 5px;"><strong>Marcus Vinicius Aguilar Barreto</strong></p>
-                        <p style="font-size: 0.95rem; opacity: 0.9;">Desenvolvedor e Criador do Projeto.</p>
-                        <a href="https://www.instagram.com/marcus_vab/" target="_blank" class="creator-insta">
-                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.232-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"/>
-                            </svg>
-                            @marcus_vab
-                        </a>
-                    </div>
-                </div>
-            </div>
-
             <div class="cta-area">
                 <p style="color: white; margin-bottom: 20px;">Faça login para realizar o teste oficial:</p>
                 <button class="btn-main" onclick="startQuizFlow()">🚀 REALIZAR QUIZ</button>
@@ -437,7 +394,7 @@
     // CONFIGURAÇÕES
     // ==========================================
     // 1. Sua URL do Google Apps Script
-    const API_URL = "https://script.google.com/macros/s/AKfycbw-cRyJa1m6LgXkrTj1h2popO_YTZrFWddcZHkQaNQsbwfGTUr5uL5Y2cXXeI-2-C4/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbx7AUdPFcolc7KgH23DOpgU4VkHVFbrgbAvdUD6lmA8PHCJhWLRO8PpksD3ahSNjIk/exec"; 
     
     // 2. Seu Client ID do Google Cloud Console
     // ATENÇÃO: Você precisa criar isso no Google Cloud Console para funcionar!
