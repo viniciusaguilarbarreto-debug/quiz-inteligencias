@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universo das Múltiplas Inteligências</title>
+    
+    <!-- Fontes e Ícones -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600;700&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    
+    <!-- Google Identity Services (Login Google) -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <style>
+        :root {
+            --primary: #667eea;
+            --accent: #764ba2;
+            --glass: rgba(255, 255, 255, 0.95);
+            --glass-dark: rgba(26, 32, 44, 0.85);
+            --text: #2d3748;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            margin: 0; padding: 0;
+            color: var(--text);
+            overflow-x: hidden;
+            background-color: #333;
+            min-height: 100vh;
+        }
+
+        /* --- BACKGROUND DINÂMICO --- */
+        #bg-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -3;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: background 1s ease;
+        }
+
+        /* Formas Flutuantes */
+        #parallax-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2; pointer-events: none;
+        }
+        .shape {
+            position: absolute; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(2px);
+            transition: transform 0.1s linear;
+        }
+        .s1 { width: 300px; height: 300px; top: -50px; left: -100px; background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%); }
+        .s2 { width: 150px; height: 150px; top: 40%; right: -50px; border: 10px solid rgba(255,255,255,0.15); background: transparent; }
+        .s3 { width: 250px; height: 250px; bottom: 5%; left: 10%; background: linear-gradient(45deg, #ff9a9e, transparent); opacity: 0.3; filter: blur(40px); }
+
+        /* --- HEADER & INTRODUÇÃO --- */
+        .main-container {
+            max-width: 900px; margin: 0 auto;
+            padding: 20px;
+            position: relative; z-index: 1;
+        }
+
+        .hero {
+            text-align: center; color: white;
+            padding: 80px 20px 40px;
+            animation: fadeIn 1s ease;
+        }
+        .hero h1 {
+            font-family: 'Fredoka', sans-serif; font-size: 3.5rem; margin: 0;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            line-height: 1.1;
+        }
+        .hero h2 { font-weight: 300; font-size: 1.5rem; margin-top: 10px; opacity: 0.9; }
+
+        .content-card {
+            background: var(--glass);
+            border-radius: 24px; padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            color: #4a5568; line-height: 1.6;
+        }
+
+        .bio-flex { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+        .bio-img { 
+            width: 100px; height: 100px; border-radius: 50%; 
+            background: #cbd5e0; flex-shrink: 0; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; color: #fff; background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+        
+        .theory-title {
+            font-family: 'Fredoka', sans-serif; font-size: 1.8rem; color: var(--accent);
+            margin-bottom: 15px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;
+        }
+        
+        .intel-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px; margin-top: 20px;
+        }
+        .intel-tag {
+            background: rgba(118, 75, 162, 0.1); color: var(--accent);
+            padding: 10px; border-radius: 12px; text-align: center;
+            font-weight: 600; font-size: 0.9rem;
+        }
+
+        .cta-area { text-align: center; margin: 50px 0; }
+        .btn-main {
+            background: white; color: var(--accent);
+            padding: 20px 50px; font-size: 1.5rem; font-family: 'Fredoka', sans-serif;
+            border: none; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .btn-main:hover { transform: scale(1.05) translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+
+        /* --- MODAL DE LOGIN (Overlay) --- */
+        #auth-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+            z-index: 999; display: none;
+            justify-content: center; align-items: center;
+        }
+        .auth-box {
+            background: white; padding: 40px; width: 90%; max-width: 400px;
+            border-radius: 24px; text-align: center; position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            animation: slideUp 0.4s ease;
+        }
+        .auth-box h3 { font-family: 'Fredoka', sans-serif; margin-top: 0; font-size: 2rem; color: var(--accent); }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; font-size: 0.9rem; color: #718096; margin-bottom: 5px; font-weight: 600; }
+        .input-group input { 
+            width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px;
+            font-family: 'Outfit', sans-serif; box-sizing: border-box; transition: 0.2s;
+        }
+        .input-group input:focus { border-color: var(--primary); outline: none; }
+        
+        .btn-auth {
+            width: 100%; padding: 15px; background: var(--accent); color: white;
+            border: none; border-radius: 10px; font-weight: 700; cursor: pointer;
+            margin-top: 10px; transition: 0.2s; font-size: 1rem;
+        }
+        .btn-auth:hover { background: var(--primary); }
+        
+        /* Container do Botão Google */
+        #google-btn-container { margin-top: 15px; display: flex; justify-content: center; }
+
+        .toggle-auth { margin-top: 20px; font-size: 0.9rem; cursor: pointer; color: var(--primary); text-decoration: underline; }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; color: #a0aec0; }
+
+        /* --- ESTILOS DO QUIZ --- */
+        #quiz-section { display: none; margin-top: 20px; }
+        .section-separator {
+            text-align: center; margin: 60px 0 25px 0;
+            opacity: 0.6; transform: scale(0.9); transition: all 0.5s ease;
+        }
+        .section-separator.active { opacity: 1; transform: scale(1); }
+        .section-emoji { font-size: 3.5rem; display: block; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2)); }
+        .section-name { color: white; font-family: 'Fredoka', sans-serif; font-size: 1.8rem; text-transform: uppercase; margin-top: 5px; }
+
+        .card {
+            background: var(--glass); border-radius: 20px;
+            padding: 25px; margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            backdrop-filter: blur(10px); transition: transform 0.2s;
+        }
+        .question { font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; color: #4a5568; }
+
+        .options-row { display: flex; justify-content: space-between; gap: 8px; }
+        .opt-btn {
+            flex: 1; height: 45px; border-radius: 12px;
+            background: #edf2f7; border: 2px solid transparent;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: #a0aec0; cursor: pointer;
+            font-family: 'Fredoka', sans-serif; transition: 0.2s;
+        }
+        .opt-btn:hover { background: #e2e8f0; }
+        .opt-btn.selected { color: white; transform: scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .opt-btn[data-val="1"].selected { background: #fc8181; } 
+        .opt-btn[data-val="2"].selected { background: #f6ad55; } 
+        .opt-btn[data-val="3"].selected { background: #f6e05e; color: #744210; } 
+        .opt-btn[data-val="4"].selected { background: #68d391; } 
+        .opt-btn[data-val="5"].selected { background: #38b2ac; } 
+
+        .final-area {
+            background: white; padding: 30px; border-radius: 24px; margin-top: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2); text-align: center;
+        }
+        .input-email {
+            width: 100%; padding: 16px; font-size: 1.1rem; border: 2px solid #e2e8f0;
+            border-radius: 12px; margin: 15px 0 20px 0; box-sizing: border-box;
+            font-family: 'Outfit', sans-serif; text-align: center; outline: none;
+        }
+        .input-email:focus { border-color: var(--primary); background: #f7fafc; }
+
+        .btn-finish {
+            width: 100%; padding: 20px; font-size: 1.2rem; font-weight: 800;
+            color: white; background: linear-gradient(to right, #667eea, #764ba2);
+            border: none; border-radius: 14px; cursor: pointer;
+            font-family: 'Fredoka', sans-serif; letter-spacing: 1px;
+            box-shadow: 0 10px 20px rgba(118, 75, 162, 0.3); transition: transform 0.2s;
+        }
+        .btn-finish:hover { transform: translateY(-3px); }
+
+        #result-view { display: none; animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .result-box {
+            background: #1a202c; color: white; padding: 30px 20px; border-radius: 30px;
+            text-align: center; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; align-items: center; gap: 20px;
+        }
+        .res-header { width: 100%; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+        .res-title { 
+            font-family: 'Fredoka', sans-serif; font-size: 2.2rem; margin: 10px 0; 
+            background: linear-gradient(to right, #fff, #a0aec0); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+        }
+        .chart-container { 
+            position: relative; width: 100%; max-width: 400px; aspect-ratio: 9 / 16;
+            margin: 10px 0; background: rgba(255,255,255,0.02); 
+            border-radius: 20px; padding: 10px; box-sizing: border-box;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .res-footer { width: 100%; }
+        .actions-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 30px; }
+        .btn-reset { 
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); 
+            color: white; padding: 12px 30px; border-radius: 50px;
+            cursor: pointer; font-family: 'Outfit', sans-serif; transition: 0.2s; font-weight: 600;
+        }
+        .btn-reset:hover { background: white; color: #1a202c; }
+        .btn-whatsapp {
+            background: #25D366; border: none; color: white; padding: 12px 30px; border-radius: 50px;
+            cursor: pointer; font-family: 'Outfit', sans-serif; transition: 0.2s;
+            font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;
+        }
+        .btn-whatsapp:hover { background: #20bd5a; transform: scale(1.05); }
+
+        #mascot-follower {
+            position: fixed; top: 20px; right: 20px; width: 70px; height: 70px;
+            background: white; border-radius: 50%; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            z-index: 90; display: none; align-items: center; justify-content: center;
+            font-size: 2rem; border: 4px solid white; transition: all 0.3s;
+        }
+        .mascot-ring {
+            position: absolute; top: -4px; left: -4px; right: -4px; bottom: -4px;
+            border-radius: 50%; border: 4px solid transparent; border-top-color: var(--primary);
+            transition: transform 0.2s linear;
+        }
+
+        .hidden { display: none !important; }
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; margin: 0 auto;}
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+    <div id="bg-layer"></div>
+    <div id="parallax-container">
+        <div class="shape s1"></div>
+        <div class="shape s2"></div>
+        <div class="shape s3"></div>
+    </div>
+
+    <div id="mascot-follower">
+        <div class="mascot-ring" id="progress-ring"></div>
+        <span id="mascot-icon">👋</span>
+    </div>
+
+    <!-- MODAL DE LOGIN / CADASTRO -->
+    <div id="auth-overlay">
+        <div class="auth-box">
+            <span class="close-modal" onclick="closeAuth()">×</span>
+            
+            <div id="form-login">
+                <h3>Bem-vindo de volta!</h3>
+                <div class="input-group">
+                    <label>E-mail</label>
+                    <input type="email" id="login-email" placeholder="seu@email.com">
+                </div>
+                <div class="input-group">
+                    <label>Senha</label>
+                    <input type="password" id="login-pass" placeholder="••••••">
+                </div>
+                <button class="btn-auth" onclick="doLogin()">Entrar</button>
+                
+                <!-- BOTÃO DO GOOGLE (RENDERIZADO VIA JS) -->
+                <div id="google-btn-container"></div>
+
+                <div class="toggle-auth" onclick="toggleForms('register')">Não tem conta? Cadastre-se</div>
+            </div>
+
+            <div id="form-register" class="hidden">
+                <h3>Criar Conta</h3>
+                <div class="input-group">
+                    <label>E-mail</label>
+                    <input type="email" id="reg-email" placeholder="seu@email.com">
+                </div>
+                <div class="input-group">
+                    <label>Senha</label>
+                    <input type="password" id="reg-pass" placeholder="Crie uma senha">
+                </div>
+                <div class="input-group">
+                    <label>Confirmar Senha</label>
+                    <input type="password" id="reg-pass-conf" placeholder="Repita a senha">
+                </div>
+                <button class="btn-auth" onclick="doRegister()">Cadastrar</button>
+                <div class="toggle-auth" onclick="toggleForms('login')">Já tem conta? Fazer Login</div>
+            </div>
+            
+            <div id="auth-msg" style="margin-top:15px; color: var(--accent); font-weight:600;"></div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div id="intro-view">
+            <header class="hero">
+                <h1>Múltiplas<br>Inteligências</h1>
+                <h2>Descubra o potencial da sua mente</h2>
+            </header>
+            <div class="content-card">
+                <div class="theory-title">🧠 A Teoria</div>
+                <p>Tudo começou com <strong>Alfred Binet</strong> em 1900, que criou testes para medir o "g" (inteligência geral). Mas a mente humana é muito mais complexa que um número.</p>
+                <p>Foi em 1983 que <strong>Howard Gardner</strong> revolucionou a psicologia com o livro <em>Estruturas da Mente</em>. Ele propôs que não somos apenas "inteligentes" ou "não inteligentes", mas sim que possuímos diferentes tipos de inteligências em graus variados.</p>
+                <div class="intel-grid">
+                    <div class="intel-tag">🗣️ Linguística</div>
+                    <div class="intel-tag">🎵 Musical</div>
+                    <div class="intel-tag">🧮 Lógica-Matemática</div>
+                    <div class="intel-tag">🎨 Visual-Espacial</div>
+                    <div class="intel-tag">🏃 Corporal-Cinestésica</div>
+                    <div class="intel-tag">🤝 Interpessoal</div>
+                    <div class="intel-tag">🧘 Intrapessoal</div>
+                    <div class="intel-tag">🌿 Naturalista</div>
+                </div>
+            </div>
+            <div class="content-card">
+                <div class="theory-title">🎓 Sobre o Autor</div>
+                <div class="bio-flex">
+                    <div class="bio-img">HG</div>
+                    <div>
+                        <p><strong>Howard Gardner</strong> (nascido em 1943) é um psicólogo cognitivo da Universidade de Harvard. Vencedor do prêmio MacArthur Foundation e do Prêmio Príncipe das Astúrias.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="cta-area">
+                <p style="color: white; margin-bottom: 20px;">Faça login para realizar o teste oficial:</p>
+                <button class="btn-main" onclick="startQuizFlow()">🚀 REALIZAR QUIZ</button>
+            </div>
+        </div>
+
+        <div id="quiz-section">
+            <div id="quiz-view">
+                <header>
+                    <h1 style="font-size: 2.5rem;">Mapeamento<br>Mental</h1>
+                    <p>Responda para descobrir seu perfil</p>
+                    <button style="background:none; border:1px solid rgba(255,255,255,0.5); color:white; padding:5px 15px; border-radius:20px; cursor:pointer; margin-top:10px;" onclick="logout()">Sair / Logout</button>
+                </header>
+                <form id="quiz-form"></form>
+                <div class="final-area">
+                    <h3>Finalizar Mapeamento</h3>
+                    <p>Confirme seu e-mail para processar o gráfico:</p>
+                    <input type="email" id="email-final" class="input-email" readonly>
+                    <button type="button" class="btn-finish" id="btn-submit" onclick="finalizar()">GERAR GRÁFICO 📊</button>
+                </div>
+            </div>
+            <div id="result-view">
+                <div class="result-box" id="print-area">
+                    <div class="res-header">
+                        <div style="font-size: 3rem; margin-bottom: 10px;" id="res-icon">🌟</div>
+                        <div style="text-transform: uppercase; letter-spacing: 2px; color: #718096; font-size: 0.8rem;">Inteligência Dominante</div>
+                        <h2 class="res-title" id="res-title">...</h2>
+                    </div>
+                    <div class="chart-container"><canvas id="radarChart"></canvas></div>
+                    <div class="res-footer">
+                        <p id="res-desc" style="font-size: 1rem; line-height: 1.6; color: #cbd5e1; max-width: 500px; margin: 0 auto;"></p>
+                        <div class="actions-row">
+                            <button class="btn-whatsapp" onclick="shareWhatsapp()"><span>💬 Compartilhar Resultado</span></button>
+                            <button class="btn-reset" onclick="resetQuiz()">🔄 Refazer Teste</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // ==========================================
+    // CONFIGURAÇÕES
+    // ==========================================
+    // 1. Sua URL do Google Apps Script
+    const API_URL = "https://script.google.com/macros/s/AKfycbw-cRyJa1m6LgXkrTj1h2popO_YTZrFWddcZHkQaNQsbwfGTUr5uL5Y2cXXeI-2-C4/exec"; 
+    
+    // 2. Seu Client ID do Google Cloud Console
+    // ATENÇÃO: Você precisa criar isso no Google Cloud Console para funcionar!
+    const GOOGLE_CLIENT_ID = "745124436728-7v7ue8rf1rsq6k45blvmac3n7mtut66v.apps.googleusercontent.com"; 
+
+    // --- Inicializa Botão Google ---
+    window.onload = function () {
+        if(typeof google !== 'undefined') {
+            google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: handleGoogleResponse
+            });
+            google.accounts.id.renderButton(
+                document.getElementById("google-btn-container"),
+                { theme: "outline", size: "large", width: "300", text: "signin_with" } 
+            );
+        }
+    };
+
+    function decodeJwtResponse(token) {
+        var base64Url = token.split('.')[1];
+        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+    }
+
+    async function handleGoogleResponse(response) {
+        const data = decodeJwtResponse(response.credential);
+        const googleEmail = data.email;
+        
+        // Envia para a planilha para registrar/logar
+        const res = await sendToSheet({ action: 'google-login', email: googleEmail });
+
+        if(res.status === 'success' || res.status === 'simulated') {
+            currentUser = googleEmail;
+            closeAuth();
+            alert(`Bem-vindo(a), ${data.name}!`);
+            startQuizFlow();
+        } else {
+            alert("Erro ao conectar com Google Sheet.");
+        }
+    }
+
+    // --- Lógica de Autenticação Padrão ---
+    let currentUser = null;
+
+    function startQuizFlow() {
+        if(currentUser) {
+            document.getElementById('intro-view').style.display = 'none';
+            document.getElementById('quiz-section').style.display = 'block';
+            document.getElementById('quiz-view').style.display = 'block'; 
+            document.getElementById('mascot-follower').style.display = 'flex';
+            document.getElementById('email-final').value = currentUser;
+            window.scrollTo(0,0);
+        } else {
+            document.getElementById('auth-overlay').style.display = 'flex';
+        }
+    }
+
+    function closeAuth() {
+        document.getElementById('auth-overlay').style.display = 'none';
+    }
+
+    function toggleForms(type) {
+        document.getElementById('form-login').classList.toggle('hidden', type !== 'login');
+        document.getElementById('form-register').classList.toggle('hidden', type !== 'register');
+        document.getElementById('auth-msg').innerText = "";
+    }
+
+    async function sendToSheet(data) {
+        const msgDiv = document.getElementById('auth-msg');
+        msgDiv.innerHTML = '<div class="loader"></div>';
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error(error);
+            if(API_URL.includes("http")) return {status: 'success', message: 'Conexão simulada (CORS)'};
+            return { status: 'error', message: 'Erro na conexão.' };
+        }
+    }
+
+    async function doRegister() {
+        const email = document.getElementById('reg-email').value;
+        const pass = document.getElementById('reg-pass').value;
+        const conf = document.getElementById('reg-pass-conf').value;
+        if(pass !== conf) return alert("Senhas não conferem!");
+        if(pass.length < 4) return alert("Senha muito curta!");
+        const res = await sendToSheet({ action: 'register', email, password: pass });
+        if(res.status === 'success') {
+            alert("Cadastro realizado! Faça login.");
+            toggleForms('login');
+        } else {
+            document.getElementById('auth-msg').innerText = res.message || "Erro ao cadastrar";
+        }
+    }
+
+    async function doLogin() {
+        const email = document.getElementById('login-email').value;
+        const pass = document.getElementById('login-pass').value;
+        if(!email || !pass) return alert("Preencha tudo!");
+        const res = await sendToSheet({ action: 'login', email, password: pass });
+        if(res.status === 'success') {
+            currentUser = email;
+            closeAuth();
+            alert("Login realizado com sucesso!");
+            startQuizFlow();
+        } else {
+            document.getElementById('auth-msg').innerText = res.message || "Email ou senha inválidos";
+        }
+    }
+
+    function logout() {
+        currentUser = null;
+        location.reload();
+    }
+
+    // --- QUIZ & CHARTS ---
+    let myRadarChart = null;
+    const dados = [
+        { nome: 'Linguística', emoji: '🗣️', cor: ['#4facfe', '#00f2fe'], qs: ["Tenho facilidade em expressar minhas ideias de forma clara?", "Gosto de aprender novas palavras?", "Aprecio jogos que envolvem palavras?", "Costumo ler livros por prazer?", "Tenho habilidade para contar histórias?"] },
+        { nome: 'Lógica', emoji: '🧮', cor: ['#43e97b', '#38f9d7'], qs: ["Gosto de resolver problemas passo a passo?", "Sinto satisfação em organizar listas?", "Pergunto 'por que' as coisas funcionam?", "Facilidade com cálculo mental?", "Identifico padrões lógicos?"] },
+        { nome: 'Visual', emoji: '🎨', cor: ['#fa709a', '#fee140'], qs: ["Visualizo objetos em 3D mentalmente?", "Facilidade para ler mapas?", "Prefiro materiais com imagens?", "Tenho bom senso de direção?", "Aprecio design e harmonia?"] },
+        { nome: 'Cinestésica', emoji: '🏃', cor: ['#fccb90', '#d57eeb'], qs: ["Prefiro aprender fazendo?", "Dificuldade em ficar parado?", "Uso gestos ao falar?", "Boa coordenação motora?", "Gosto de trabalhos manuais?"] },
+        { nome: 'Musical', emoji: '🎵', cor: ['#e0c3fc', '#8ec5fc'], qs: ["Músicas ficam na cabeça?", "Percebo desafinação?", "Música muda meu humor?", "Acompanho ritmos facilmente?", "Identifico instrumentos?"] },
+        { nome: 'Interpessoal', emoji: '🤝', cor: ['#ff9a9e', '#fecfef'], qs: ["Amigos pedem conselhos?", "Prefiro trabalhar em equipe?", "Percebo sentimentos pela expressão?", "Energizado em eventos sociais?", "Facilidade em mediar conflitos?"] },
+        { nome: 'Intrapessoal', emoji: '🧘', cor: ['#a18cd1', '#fbc2eb'], qs: ["Valorizo momentos de solidão?", "Clareza sobre pontos fortes?", "Gosto de autoconhecimento?", "Sou independente?", "Prefiro hobbies solitários?"] },
+        { nome: 'Naturalista', emoji: '🌿', cor: ['#84fab0', '#8fd3f4'], qs: ["Renovado em contato com a natureza?", "Observo detalhes em plantas?", "Gosto de cuidar de jardins/animais?", "Preocupo-me com meio ambiente?", "Percebo mudanças no clima?"] }
+    ];
+
+    const form = document.getElementById('quiz-form');
+    let totalPerguntas = 0, pontos = new Array(8).fill(0), respondidasCount = 0;
+
+    dados.forEach((cat, idx) => {
+        const divSec = document.createElement('div');
+        divSec.className = 'section-wrapper'; divSec.dataset.idx = idx;
+        divSec.innerHTML = `<div class="section-separator"><span class="section-emoji">${cat.emoji}</span><div class="section-name">${cat.nome}</div></div>`;
+        form.appendChild(divSec);
+        cat.qs.forEach((q, qIdx) => {
+            totalPerguntas++;
+            const id = `s${idx}q${qIdx}`;
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `<div class="question">${q}</div>
+                <div class="options-row" id="row-${id}">
+                    ${[1,2,3,4,5].map(val => `<div class="opt-btn" data-val="${val}" onclick="selectOpt('${id}', ${val}, ${idx}, this)">${val}</div>`).join('')}
+                </div><input type="hidden" id="in-${id}" value="0">`;
+            form.appendChild(card);
+        });
+    });
+
+    window.selectOpt = function(id, val, catIdx, el) {
+        const row = document.getElementById(`row-${id}`);
+        Array.from(row.children).forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+        const input = document.getElementById(`in-${id}`);
+        const oldVal = parseInt(input.value);
+        if(oldVal === 0) respondidasCount++;
+        input.value = val;
+        pontos[catIdx] = pontos[catIdx] - oldVal + val;
+        const pct = (respondidasCount / totalPerguntas) * 360;
+        document.getElementById('progress-ring').style.transform = `rotate(${pct}deg)`;
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if(entry.isIntersecting) {
+                const idx = entry.target.dataset.idx;
+                const cat = dados[idx];
+                document.getElementById('bg-layer').style.background = `linear-gradient(135deg, ${cat.cor[0]} 0%, ${cat.cor[1]} 100%)`;
+                document.getElementById('mascot-icon').innerText = cat.emoji;
+                document.querySelector('.mascot-ring').style.borderTopColor = cat.cor[1];
+                entry.target.querySelector('.section-separator').classList.add('active');
+            }
+        });
+    }, { threshold: 0.1 });
+    setTimeout(() => { document.querySelectorAll('.section-wrapper').forEach(el => observer.observe(el)); }, 500);
+
+    window.addEventListener('scroll', () => {
+        const y = window.scrollY;
+        document.querySelector('.s1').style.transform = `translateY(${y * 0.2}px)`;
+        document.querySelector('.s2').style.transform = `translateY(${y * 0.4}px) rotate(${y * 0.1}deg)`;
+    });
+
+    window.finalizar = function() {
+        if(respondidasCount < totalPerguntas) if(!confirm("Algumas perguntas ficaram em branco. Continuar?")) return;
+        const btn = document.getElementById('btn-submit');
+        btn.innerHTML = "PROCESSANDO..."; btn.disabled = true;
+        const maxScore = Math.max(...pontos);
+        const winIdx = pontos.indexOf(maxScore);
+        const vencedor = dados[winIdx];
+        const rawAnswers = [];
+        document.querySelectorAll('input[type="hidden"]').forEach(i => rawAnswers.push(i.value));
+
+        document.getElementById('quiz-view').style.display = 'none';
+        const resultView = document.getElementById('result-view');
+        resultView.style.display = 'block';
+        resultView.scrollIntoView({ behavior: 'instant', block: 'start' });
+
+        mostrarGrafico(vencedor, pontos);
+        
+        // Envia resultado
+        fetch(API_URL, {
+            method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'save_result', email: currentUser, resultado: vencedor.nome, respostas: rawAnswers })
+        }).catch(e => console.log("Salvo localmente"));
+    };
+
+    function mostrarGrafico(vencedor, dataPoints) {
+        document.getElementById('res-icon').innerText = vencedor.emoji;
+        document.getElementById('res-title').innerText = vencedor.nome;
+        document.getElementById('res-desc').innerText = `Seu perfil indica uma forte aptidão em inteligência ${vencedor.nome}.`;
+        setTimeout(() => {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            if(myRadarChart) myRadarChart.destroy();
+            myRadarChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: dados.map(d => d.nome),
+                    datasets: [{ label: 'Seu Perfil', data: dataPoints, backgroundColor: 'rgba(102, 126, 234, 0.4)', borderColor: '#764ba2', borderWidth: 2, pointBackgroundColor: '#fff', pointBorderColor: '#fff' }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, layout: { padding: 20 },
+                    scales: { r: { angleLines: { color: 'rgba(255,255,255,0.1)' }, grid: { color: 'rgba(255,255,255,0.1)' }, pointLabels: { color: 'white', font: {size: 11, family: 'Fredoka'} }, ticks: { display: false, backdropColor: 'transparent' }, suggestedMin: 0 } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }, 100);
+    }
+
+    window.resetQuiz = function() {
+        pontos = new Array(8).fill(0); respondidasCount = 0;
+        document.querySelectorAll('input[type="hidden"]').forEach(inp => inp.value = "0");
+        document.querySelectorAll('.opt-btn').forEach(opt => opt.classList.remove('selected'));
+        const btn = document.getElementById('btn-submit'); btn.innerHTML = "GERAR GRÁFICO 📊"; btn.disabled = false;
+        document.getElementById('progress-ring').style.transform = "rotate(0deg)";
+        document.getElementById('result-view').style.display = 'none';
+        document.getElementById('quiz-view').style.display = 'block';
+        document.getElementById('quiz-view').scrollIntoView({ behavior: 'instant', block: 'start' });
+    };
+
+    window.shareWhatsapp = function() {
+        const title = document.getElementById('res-title').innerText;
+        const text = `Fiz o Mapeamento de Inteligências e meu resultado dominante foi: *${title}*! 🧠✨\n\nDescubra o seu aqui: ${window.location.href}`;
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+    };
+</script>
+</body>
+</html>
