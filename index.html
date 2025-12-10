@@ -393,11 +393,10 @@
     // ==========================================
     // CONFIGURAÇÕES
     // ==========================================
-    // 1. Sua URL do Google Apps Script
+    // URL do Google Apps Script (Certifique-se que está correta)
     const API_URL = "https://script.google.com/macros/s/AKfycbzKi5r9tMsIA88ZzA56Y5BKwUEkKW6CA3rp7AudvxWta2-eUzYr9CUI7rFzda_-QNM/exec"; 
     
-    // 2. Seu Client ID do Google Cloud Console
-    // ATENÇÃO: Você precisa criar isso no Google Cloud Console para funcionar!
+    // Client ID do Google (Deve ser configurado no Google Cloud Console)
     const GOOGLE_CLIENT_ID = "745124436728-7v7ue8rf1rsq6k45blvmac3n7mtut66v.apps.googleusercontent.com"; 
 
     // --- Inicializa Botão Google ---
@@ -427,16 +426,15 @@
         const data = decodeJwtResponse(response.credential);
         const googleEmail = data.email;
         
-        // Envia para a planilha para registrar/logar
         const res = await sendToSheet({ action: 'google-login', email: googleEmail });
 
-        if(res.status === 'success' || res.status === 'simulated') {
+        if(res.status === 'success') {
             currentUser = googleEmail;
             closeAuth();
             alert(`Bem-vindo(a), ${data.name}!`);
             startQuizFlow();
         } else {
-            alert("Erro ao conectar com Google Sheet.");
+            alert(res.message || "Erro ao conectar com Google Sheet.");
         }
     }
 
@@ -466,20 +464,28 @@
         document.getElementById('auth-msg').innerText = "";
     }
 
+    // --- FUNÇÃO CORRIGIDA PARA COMUNICAÇÃO COM O GOOGLE APPS SCRIPT ---
     async function sendToSheet(data) {
         const msgDiv = document.getElementById('auth-msg');
-        msgDiv.innerHTML = '<div class="loader"></div>';
+        // Mostra loading apenas se a div de mensagem existir (no modal de login)
+        if(msgDiv && document.getElementById('auth-overlay').style.display !== 'none') {
+            msgDiv.innerHTML = '<div class="loader"></div>';
+        }
+
         try {
+            // NOTA: Para evitar erro de CORS (Preflight), usamos fetch simples
+            // sem cabeçalho Content-Type: application/json.
+            // O Apps Script recebe como text/plain e o JSON.parse no backend processa.
             const response = await fetch(API_URL, {
                 method: 'POST',
                 body: JSON.stringify(data)
             });
+            
             const result = await response.json();
             return result;
         } catch (error) {
-            console.error(error);
-            if(API_URL.includes("http")) return {status: 'success', message: 'Conexão simulada (CORS)'};
-            return { status: 'error', message: 'Erro na conexão.' };
+            console.error("Erro no fetch:", error);
+            return { status: 'error', message: 'Erro de conexão com o servidor.' };
         }
     }
 
@@ -489,27 +495,37 @@
         const conf = document.getElementById('reg-pass-conf').value;
         if(pass !== conf) return alert("Senhas não conferem!");
         if(pass.length < 4) return alert("Senha muito curta!");
+        
         const res = await sendToSheet({ action: 'register', email, password: pass });
+        
+        const msgDiv = document.getElementById('auth-msg');
         if(res.status === 'success') {
             alert("Cadastro realizado! Faça login.");
             toggleForms('login');
+            msgDiv.innerHTML = "";
         } else {
-            document.getElementById('auth-msg').innerText = res.message || "Erro ao cadastrar";
+            msgDiv.innerText = res.message || "Erro ao cadastrar";
         }
     }
 
     async function doLogin() {
         const email = document.getElementById('login-email').value;
         const pass = document.getElementById('login-pass').value;
-        if(!email || !pass) return alert("Preencha tudo!");
+        if(!email || !pass) return alert("Preencha todos os campos!");
+        
+        // Agora envia para validação real no Sheet
         const res = await sendToSheet({ action: 'login', email, password: pass });
+        
+        const msgDiv = document.getElementById('auth-msg');
         if(res.status === 'success') {
             currentUser = email;
             closeAuth();
+            msgDiv.innerHTML = "";
             alert("Login realizado com sucesso!");
             startQuizFlow();
         } else {
-            document.getElementById('auth-msg').innerText = res.message || "Email ou senha inválidos";
+            // Exibe a mensagem de erro exata retornada pelo Script (ex: "Senha incorreta")
+            msgDiv.innerText = res.message || "Erro de autenticação";
         }
     }
 
@@ -585,15 +601,25 @@
         document.querySelector('.s2').style.transform = `translateY(${y * 0.4}px) rotate(${y * 0.1}deg)`;
     });
 
-    window.finalizar = function() {
+    window.finalizar = async function() {
         if(respondidasCount < totalPerguntas) if(!confirm("Algumas perguntas ficaram em branco. Continuar?")) return;
+        
         const btn = document.getElementById('btn-submit');
         btn.innerHTML = "PROCESSANDO..."; btn.disabled = true;
+        
         const maxScore = Math.max(...pontos);
         const winIdx = pontos.indexOf(maxScore);
         const vencedor = dados[winIdx];
         const rawAnswers = [];
         document.querySelectorAll('input[type="hidden"]').forEach(i => rawAnswers.push(i.value));
+
+        // Envia resultado usando a função segura sendToSheet
+        await sendToSheet({ 
+            action: 'save_result', 
+            email: currentUser, 
+            resultado: vencedor.nome, 
+            respostas: rawAnswers 
+        });
 
         document.getElementById('quiz-view').style.display = 'none';
         const resultView = document.getElementById('result-view');
@@ -601,12 +627,6 @@
         resultView.scrollIntoView({ behavior: 'instant', block: 'start' });
 
         mostrarGrafico(vencedor, pontos);
-        
-        // Envia resultado
-        fetch(API_URL, {
-            method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'save_result', email: currentUser, resultado: vencedor.nome, respostas: rawAnswers })
-        }).catch(e => console.log("Salvo localmente"));
     };
 
     function mostrarGrafico(vencedor, dataPoints) {
