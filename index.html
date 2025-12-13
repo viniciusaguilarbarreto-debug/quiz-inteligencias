@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universo das Múltiplas Inteligências</title>
+    <title>Universo das Múltiplas Inteligências & QI</title>
     
     <!-- Fontes e Ícones -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600;700&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
@@ -15,7 +15,7 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <style>
-        /* (CSS Base mantido) */
+        /* (CSS Base Original mantido) */
         :root { --primary: #667eea; --accent: #764ba2; --glass: rgba(255, 255, 255, 0.95); --text: #2d3748; }
         body { font-family: 'Outfit', sans-serif; margin: 0; padding: 0; color: var(--text); overflow-x: hidden; background-color: #333; min-height: 100vh; }
         #bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); transition: background 1s ease; }
@@ -34,9 +34,13 @@
         .theory-title { font-family: 'Fredoka', sans-serif; font-size: 1.8rem; color: var(--accent); margin-bottom: 15px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
         .intel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-top: 20px; }
         .intel-tag { background: rgba(118, 75, 162, 0.1); color: var(--accent); padding: 10px; border-radius: 12px; text-align: center; font-weight: 600; font-size: 0.9rem; }
-        .cta-area { text-align: center; margin: 50px 0; }
+        .cta-area { text-align: center; margin: 50px 0; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .btn-main { background: white; color: var(--accent); padding: 20px 50px; font-size: 1.5rem; font-family: 'Fredoka', sans-serif; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.2); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-transform: uppercase; letter-spacing: 1px; }
         .btn-main:hover { transform: scale(1.05) translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        
+        /* Botão específico do QI */
+        .btn-iq { background: var(--accent); color: white; border: 2px solid white; }
+        
         #auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 999; display: none; justify-content: center; align-items: center; }
         .auth-box { background: white; padding: 40px; width: 90%; max-width: 400px; border-radius: 24px; text-align: center; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.4); animation: slideUp 0.4s ease; }
         .auth-box h3 { font-family: 'Fredoka', sans-serif; margin-top: 0; font-size: 2rem; color: var(--accent); }
@@ -111,6 +115,41 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* ========================================================== */
+        /* CSS DO TESTE DE QI (Adicionado e Adaptado para não quebrar) */
+        /* ========================================================== */
+        #iq-test-view { display: none; width: 100%; color: #2c3e50; }
+        #iq-test-view .iq-card { background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center; width: 100%; box-sizing: border-box; margin-bottom: 20px; }
+        #iq-test-view .iq-header { width: 100%; background: #ffffff; padding: 15px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; justify-content: center; margin-bottom: 20px; }
+        #iq-test-view .header-content { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+        #iq-test-view .iq-timer { font-family: monospace; font-size: 1.2rem; color: #3498db; background: #ebf5fb; padding: 5px 10px; border-radius: 4px; }
+        #iq-test-view .progress-container { width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; margin-bottom: 20px; }
+        #iq-test-view .progress-bar { height: 100%; background: #3498db; width: 0%; transition: width 0.4s ease; }
+        #iq-test-view .iq-screen { display: none; flex-direction: column; align-items: center; animation: fadeUp 0.5s ease; }
+        #iq-test-view .iq-screen.active { display: flex; }
+        #iq-test-view .puzzle-area { display: flex; gap: 15px; margin: 30px 0; justify-content: center; flex-wrap: wrap; }
+        #iq-test-view .shape-box { width: 100px; height: 100px; border: 2px solid #bdc3c7; border-radius: 8px; background: #fff; display: flex; justify-content: center; align-items: center; }
+        #iq-test-view .shape-box.question { border: 2px dashed #3498db; background: #fdfdfd; color: #3498db; font-size: 2.5rem; font-weight: bold; }
+        #iq-test-view .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 15px; width: 100%; }
+        #iq-test-view .option-btn { height: 100px; border: 2px solid transparent; border-radius: 8px; background: #fff; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.05); transition: all 0.2s; display: flex; justify-content: center; align-items: center; }
+        #iq-test-view .option-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
+        #iq-test-view .option-btn.correct { border-color: #27ae60; background: #eafaf1; box-shadow: 0 0 15px rgba(39, 174, 96, 0.4); }
+        #iq-test-view .option-btn.wrong { border-color: #c0392b; opacity: 0.6; background: #fdedec; }
+        #iq-test-view .disabled-interactions { pointer-events: none; }
+        #iq-test-view svg { width: 80%; height: 80%; }
+        #iq-test-view .svg-stroke { fill: none; stroke: #2c3e50; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+        #iq-test-view .svg-fill { fill: #2c3e50; stroke: none; }
+        #iq-test-view .btn-iq-action { background: #3498db; color: white; border: none; padding: 12px 30px; font-size: 1rem; border-radius: 6px; cursor: pointer; margin-top: 20px; transition: 0.2s; text-transform: uppercase; font-weight: bold; }
+        #iq-test-view .btn-iq-action:hover { background: #2980b9; }
+        
+        /* Modal do QI */
+        #iq-feedback-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); z-index: 900; }
+        #iq-feedback-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; width: 90%; max-width: 450px; padding: 30px; border-radius: 15px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); z-index: 901; text-align: center; border-top: 6px solid #3498db; color: #2c3e50; }
+        
+        #bell-curve { width: 100%; height: 100%; }
+        .graph-container { width: 100%; height: 250px; margin: 20px 0; position: relative; border-bottom: 1px solid #ccc; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -194,8 +233,10 @@
                 </div>
             </div>
             <div class="cta-area">
-                <p style="color: white; margin-bottom: 20px;">Faça login para realizar o teste oficial:</p>
-                <button class="btn-main" onclick="startQuizFlow()">🚀 REALIZAR QUIZ</button>
+                <p style="color: white; margin-bottom: 5px;">Faça login para realizar o teste oficial:</p>
+                <button class="btn-main" onclick="startQuizFlow()">🚀 REALIZAR QUIZ (INTELIGÊNCIAS)</button>
+                <!-- BOTÃO ADICIONADO PARA O TESTE DE QI -->
+                <button class="btn-main btn-iq" onclick="startIQTestFlow()">🧠 REALIZAR TESTE DE QI (LÓGICA)</button>
             </div>
         </div>
 
@@ -249,6 +290,78 @@
                 </div>
             </div>
         </div>
+
+        <!-- ========================================== -->
+        <!-- ÁREA DO TESTE DE QI (INTEGRADA) -->
+        <!-- ========================================== -->
+        <div id="iq-test-view">
+            <header class="iq-header">
+                <div class="header-content">
+                    <h2 style="margin:0; color:#2c3e50;">Teste de QI <small style="font-weight:normal; font-size:0.8rem;">Lógica & Padrões</small></h2>
+                    <div class="iq-timer" id="iq-timer">00:00</div>
+                </div>
+            </header>
+            
+            <div class="progress-container"><div class="progress-bar" id="iq-progress"></div></div>
+
+            <!-- INTRO QI -->
+            <div id="iq-screen-intro" class="iq-screen active">
+                <div class="iq-card">
+                    <h1>Avaliação de Raciocínio Lógico</h1>
+                    <p>Este teste consiste em <strong>20 questões</strong> com dificuldade progressiva.</p>
+                    <ul style="text-align:left; display:inline-block; line-height:1.6;">
+                        <li>🧩 <strong>Padrões de Imagem:</strong> Complete a sequência.</li>
+                        <li>🎲 <strong>Dados e Dominós:</strong> Lógica numérica visual.</li>
+                        <li>📐 <strong>Geometria:</strong> Rotação, soma e subtração de formas.</li>
+                    </ul>
+                    <p>Ao responder, você receberá <strong>feedback imediato</strong> sobre a lógica correta.</p>
+                    <button class="btn-iq-action" onclick="app.start()">Iniciar Teste</button>
+                    <button style="margin-top:10px; background:transparent; border:1px solid #ccc; color:#666; padding:10px 20px; border-radius:6px; cursor:pointer;" onclick="location.reload()">Voltar ao Menu</button>
+                </div>
+            </div>
+
+            <!-- QUIZ QI -->
+            <div id="iq-screen-quiz" class="iq-screen">
+                <div style="width:100%; text-align:right; color:#7f8c8d; margin-bottom:5px;">Questão <span id="iq-q-current">1</span>/20</div>
+                
+                <div class="iq-card">
+                    <div class="puzzle-area" id="puzzle-display"></div>
+                    <p style="color:#7f8c8d; font-size:0.9rem;">Selecione a opção que completa logicamente o padrão:</p>
+                    <div class="options-grid" id="options-display"></div>
+                </div>
+            </div>
+
+            <!-- RESULT QI -->
+            <div id="iq-screen-result" class="iq-screen">
+                <div class="iq-card">
+                    <h2>Resultado Final</h2>
+                    <div style="font-size:3.5rem; font-weight:800; color:#2c3e50; margin:10px 0;">
+                        QI: <span id="iq-score">---</span>
+                    </div>
+                    <p id="iq-class" style="font-weight:bold; color:#3498db; text-transform:uppercase; margin-bottom:20px;">---</p>
+                    
+                    <div class="graph-container">
+                        <canvas id="bell-curve"></canvas>
+                    </div>
+                    <p style="font-size:0.8rem; color:#666;">O ponto azul indica sua posição em relação à média populacional (Curva Normal).</p>
+
+                    <div style="margin-top:20px; padding:15px; background:#f9f9f9; border-radius:8px;">
+                        <strong>Acertos Brutos:</strong> <span id="iq-raw-score"></span>/20
+                    </div>
+                    <button class="btn-iq-action" onclick="app.reset()">Refazer Teste</button>
+                    <button style="margin-top:10px; background:transparent; border:1px solid #ccc; color:#666; padding:10px 20px; border-radius:6px; cursor:pointer;" onclick="location.reload()">Voltar ao Menu Principal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEEDBACK MODAL DO QI -->
+    <div id="iq-feedback-overlay"></div>
+    <div id="iq-feedback-modal">
+        <div id="fb-icon" style="font-size:3rem; margin-bottom:15px;"></div>
+        <h3 id="fb-title" style="margin:0 0 10px 0;"></h3>
+        <p id="fb-text" style="color:#555; line-height:1.5;"></p>
+        <button class="btn-iq-action" onclick="app.next()">Próximo ➔</button>
     </div>
 
 <script>
@@ -294,7 +407,8 @@
             currentUser = googleEmail;
             closeAuth();
             alert(`Bem-vindo(a), ${data.name}!`);
-            startQuizFlow();
+            // Não inicia o quiz automaticamente, deixa o usuário escolher
+            // startQuizFlow(); 
         } else {
             alert(res.message || "Erro ao conectar com Google Sheet.");
         }
@@ -310,6 +424,18 @@
             document.getElementById('quiz-view').style.display = 'block'; 
             document.getElementById('mascot-follower').style.display = 'flex';
             document.getElementById('email-final').value = currentUser;
+            window.scrollTo(0,0);
+        } else {
+            document.getElementById('auth-overlay').style.display = 'flex';
+        }
+    }
+
+    // --- Lógica de Início do Teste de QI ---
+    function startIQTestFlow() {
+        if(currentUser) {
+            document.getElementById('intro-view').style.display = 'none';
+            document.getElementById('quiz-section').style.display = 'none'; // Garante que o outro quiz esteja oculto
+            document.getElementById('iq-test-view').style.display = 'block';
             window.scrollTo(0,0);
         } else {
             document.getElementById('auth-overlay').style.display = 'flex';
@@ -390,7 +516,7 @@
             closeAuth();
             msgDiv.innerHTML = "";
             alert("Login realizado com sucesso!");
-            startQuizFlow();
+            // startQuizFlow(); // Comentado para permitir escolha
         } else {
             // Mostra o erro retornado pela planilha (ex: "Senha incorreta")
             msgDiv.innerText = res.message || "Erro de autenticação";
@@ -402,7 +528,7 @@
         location.reload();
     }
 
-    // --- QUIZ & CHARTS ---
+    // --- QUIZ & CHARTS (CÓDIGO ORIGINAL DO PRIMEIRO TESTE) ---
     let myRadarChart = null;
     
     // ATUALIZAÇÃO: Perguntas baseadas em contexto e cenários reais, não apenas autoavaliação
@@ -687,6 +813,164 @@
     function closeHistory() {
         document.getElementById('history-view').style.display = 'none';
         document.getElementById('quiz-view').style.display = 'block';
+    }
+
+    // ==========================================
+    // CÓDIGO DO TESTE DE QI (INTEGRADO)
+    // ==========================================
+
+    const Graphics = {
+        svg: (content, rot=0) => `<svg viewBox="0 0 100 100" style="transform: rotate(${rot}deg);">${content}</svg>`,
+        rect: (fill=false) => `<rect x="20" y="20" width="60" height="60" class="${fill?'svg-fill':'svg-stroke'}"/>`,
+        circle: (fill=false) => `<circle cx="50" cy="50" r="35" class="${fill?'svg-fill':'svg-stroke'}"/>`,
+        triangle: (fill=false) => `<polygon points="50,15 85,80 15,80" class="${fill?'svg-fill':'svg-stroke'}"/>`,
+        diamond: (fill=false) => `<polygon points="50,15 85,50 50,85 15,50" class="${fill?'svg-fill':'svg-stroke'}"/>`,
+        cross: () => `<path d="M50,15 v70 M15,50 h70" class="svg-stroke"/>`,
+        dice: (val) => {
+            let dots = '';
+            const r = 6;
+            const pos = { c: `<circle cx="50" cy="50" r="${r}" fill="#333"/>`, tl: `<circle cx="25" cy="25" r="${r}" fill="#333"/>`, tr: `<circle cx="75" cy="25" r="${r}" fill="#333"/>`, bl: `<circle cx="25" cy="75" r="${r}" fill="#333"/>`, br: `<circle cx="75" cy="75" r="${r}" fill="#333"/>`, ml: `<circle cx="25" cy="50" r="${r}" fill="#333"/>`, mr: `<circle cx="75" cy="50" r="${r}" fill="#333"/>` };
+            if(val===1) dots = pos.c; if(val===2) dots = pos.tl + pos.br; if(val===3) dots = pos.tl + pos.c + pos.br; if(val===4) dots = pos.tl + pos.tr + pos.bl + pos.br; if(val===5) dots = pos.tl + pos.tr + pos.c + pos.bl + pos.br; if(val===6) dots = pos.tl + pos.tr + pos.ml + pos.mr + pos.bl + pos.br;
+            return `<rect x="5" y="5" width="90" height="90" rx="10" fill="white" stroke="#333" stroke-width="3"/>${dots}`;
+        },
+        grid: (activeIndices) => {
+            let els = '';
+            for(let i=0; i<9; i++) { let x = 15 + (i%3)*25; let y = 15 + Math.floor(i/3)*25; let fill = activeIndices.includes(i) ? '#3498db' : '#e0e0e0'; els += `<rect x="${x}" y="${y}" width="20" height="20" fill="${fill}" rx="2"/>`; }
+            return els;
+        },
+        pie: (percent) => { const end = percent * 3.6; return `<circle cx="50" cy="50" r="40" class="svg-stroke"/> <line x1="50" y1="50" x2="50" y2="10" transform="rotate(${end}, 50, 50)" class="svg-stroke"/>`; }
+    };
+
+    const questions = [
+        { seq: [Graphics.svg(Graphics.rect(false)), Graphics.svg(Graphics.rect(true)), Graphics.svg(Graphics.rect(false))], correct: Graphics.svg(Graphics.rect(true)), logic: "Alternância simples: Vazio, Cheio, Vazio... O próximo é Cheio.", distractors: [Graphics.svg(Graphics.rect(false)), Graphics.svg(Graphics.circle(true)), Graphics.svg(Graphics.triangle())] },
+        { seq: [Graphics.svg(`<line x1="20" y1="50" x2="80" y2="50" class="svg-stroke"/>`), Graphics.svg(Graphics.cross()), Graphics.svg(`<path d="M50,15 v70 M15,50 h70 M20,20 l60,60" class="svg-stroke"/>`)], correct: Graphics.svg(`<path d="M50,15 v70 M15,50 h70 M20,20 l60,60 M80,20 l-60,60" class="svg-stroke"/>`), logic: "Aumenta o número de traços: 1, 2, 3... O próximo deve ter 4 traços.", distractors: [Graphics.svg(Graphics.cross()), Graphics.svg(Graphics.circle()), Graphics.svg(`<line x1="20" y1="50" x2="80" y2="50" class="svg-stroke"/>`)] },
+        { seq: [Graphics.svg(Graphics.dice(1)), Graphics.svg(Graphics.dice(2)), Graphics.svg(Graphics.dice(3))], correct: Graphics.svg(Graphics.dice(4)), logic: "Sequência numérica nos dados: 1, 2, 3... O próximo é 4.", distractors: [Graphics.svg(Graphics.dice(1)), Graphics.svg(Graphics.dice(5)), Graphics.svg(Graphics.dice(6))] },
+        { seq: [Graphics.svg(Graphics.triangle(), 0), Graphics.svg(Graphics.triangle(), 90), Graphics.svg(Graphics.triangle(), 180)], correct: Graphics.svg(Graphics.triangle(), 270), logic: "O triângulo gira 90 graus no sentido horário a cada passo.", distractors: [Graphics.svg(Graphics.triangle(), 0), Graphics.svg(Graphics.triangle(), 90), Graphics.svg(Graphics.circle())] },
+        { seq: [Graphics.svg(Graphics.grid([0])), Graphics.svg(Graphics.grid([1])), Graphics.svg(Graphics.grid([2]))], correct: Graphics.svg(Graphics.grid([3])), logic: "O quadrado preenchido move-se uma casa para a direita. Ao final da linha, vai para a próxima.", distractors: [Graphics.svg(Graphics.grid([0])), Graphics.svg(Graphics.grid([4])), Graphics.svg(Graphics.grid([5]))] },
+        { seq: [Graphics.svg(`<rect x="20" y="20" width="60" height="60" class="svg-stroke"/><circle cx="50" cy="50" r="20" class="svg-fill"/>`), Graphics.svg(Graphics.rect(false))], correct: Graphics.svg(`<circle cx="50" cy="50" r="20" class="svg-fill"/>`), logic: "Soma visual: A primeira figura (Vertical) sobreposta à segunda (Horizontal) cria a terceira (Cruz).", seq: [Graphics.svg(`<line x1="50" y1="10" x2="50" y2="90" class="svg-stroke"/>`), Graphics.svg(`<line x1="10" y1="50" x2="90" y2="50" class="svg-stroke"/>`)], correct: Graphics.svg(Graphics.cross()), distractors: [Graphics.svg(`<line x1="50" y1="10" x2="50" y2="90" class="svg-stroke"/>`), Graphics.svg(Graphics.circle()), Graphics.svg(Graphics.diamond())] },
+        { seq: [Graphics.svg(Graphics.dice(6)), Graphics.svg(Graphics.dice(5)), Graphics.svg(Graphics.dice(4))], correct: Graphics.svg(Graphics.dice(3)), logic: "Contagem regressiva nos dados: 6, 5, 4... O próximo é 3.", distractors: [Graphics.svg(Graphics.dice(2)), Graphics.svg(Graphics.dice(1)), Graphics.svg(Graphics.dice(6))] },
+        { seq: [Graphics.svg(Graphics.triangle()), Graphics.svg(Graphics.rect()), Graphics.svg(`<polygon points="50,10 90,40 70,90 30,90 10,40" class="svg-stroke"/>`)], correct: Graphics.svg(`<polygon points="30,10 70,10 90,50 70,90 30,90 10,50" class="svg-stroke"/>`), logic: "Aumenta o número de lados: Triângulo (3), Quadrado (4), Pentágono (5). O próximo é Hexágono (6).", distractors: [Graphics.svg(Graphics.rect()), Graphics.svg(Graphics.triangle()), Graphics.svg(Graphics.circle())] },
+        { seq: [Graphics.svg(Graphics.pie(0)), Graphics.svg(Graphics.pie(25)), Graphics.svg(Graphics.pie(50))], correct: Graphics.svg(Graphics.pie(75)), logic: "O ponteiro gira 90 graus a cada passo (12h, 3h, 6h -> 9h).", distractors: [Graphics.svg(Graphics.pie(0)), Graphics.svg(Graphics.pie(12)), Graphics.svg(Graphics.pie(100))] },
+        { seq: [Graphics.svg(Graphics.grid([0,1])), Graphics.svg(Graphics.grid([1,2]))], correct: Graphics.svg(Graphics.grid([2,3])), logic: "Os pontos movem-se uma casa para a direita em bloco.", distractors: [Graphics.svg(Graphics.grid([0,2])), Graphics.svg(Graphics.grid([3,4])), Graphics.svg(Graphics.grid([4,5]))] },
+        { seq: [Graphics.svg(`<rect x="40" y="40" width="20" height="20" class="svg-fill"/>`), Graphics.svg(`<rect x="30" y="30" width="40" height="40" class="svg-fill"/>`)], correct: Graphics.svg(`<rect x="20" y="20" width="60" height="60" class="svg-fill"/>`), logic: "O quadrado aumenta de tamanho uniformemente.", distractors: [Graphics.svg(Graphics.rect(false)), Graphics.svg(`<circle cx="50" cy="50" r="20" class="svg-fill"/>`), Graphics.svg(`<rect x="40" y="40" width="20" height="20" class="svg-fill"/>`)] },
+        { seq: [Graphics.svg(Graphics.grid([0])), Graphics.svg(Graphics.grid([8])), Graphics.svg(Graphics.grid([0]))], correct: Graphics.svg(Graphics.grid([8])), logic: "O ponto alterna entre o canto superior esquerdo e inferior direito.", distractors: [Graphics.svg(Graphics.grid([4])), Graphics.svg(Graphics.grid([0])), Graphics.svg(Graphics.grid([2]))] },
+        { seq: [Graphics.svg(Graphics.triangle(), 0), Graphics.svg(Graphics.rect(), 45), Graphics.svg(`<polygon points="50,10 90,40 70,90 30,90 10,40" class="svg-stroke"/>`, 90)], correct: Graphics.svg(`<polygon points="30,10 70,10 90,50 70,90 30,90 10,50" class="svg-stroke"/>`, 135), logic: "Duas regras simultâneas: 1. Aumenta o número de lados (3,4,5->6). 2. Gira 45 graus a cada passo.", distractors: [Graphics.svg(Graphics.rect(), 90), Graphics.svg(Graphics.triangle(), 135), Graphics.svg(Graphics.circle())] },
+        { seq: [Graphics.svg(Graphics.grid([0,1,2])), Graphics.svg(Graphics.grid([3,4,5]))], correct: Graphics.svg(Graphics.grid([6,7,8])), logic: "A linha preenchida desce um nível a cada passo.", distractors: [Graphics.svg(Graphics.grid([0,1,2])), Graphics.svg(Graphics.grid([0,3,6])), Graphics.svg(Graphics.grid([4]))] },
+        { seq: [Graphics.svg(Graphics.circle(true)), Graphics.svg(`<circle cx="50" cy="50" r="20" fill="white"/>`)], correct: Graphics.svg(`<circle cx="50" cy="50" r="35" class="svg-fill"/><circle cx="50" cy="50" r="15" fill="white"/>`), logic: "O segundo objeto é colocado sobre o primeiro, 'furando' a forma.", distractors: [Graphics.svg(Graphics.circle(true)), Graphics.svg(Graphics.circle(false)), Graphics.svg(Graphics.rect(true))] },
+        { seq: [Graphics.svg(Graphics.dice(6)), Graphics.svg(Graphics.dice(1)), Graphics.svg(Graphics.dice(5))], correct: Graphics.svg(Graphics.dice(2)), logic: "Pares somam 7 (Lógica padrão de dados): 6 oposto a 1. 5 oposto a 2.", distractors: [Graphics.svg(Graphics.dice(3)), Graphics.svg(Graphics.dice(4)), Graphics.svg(Graphics.dice(5))] },
+        { seq: [Graphics.svg(`<path d="M50,50 L50,10" class="svg-stroke"/>`), Graphics.svg(`<path d="M50,50 L90,50" class="svg-stroke"/>`), Graphics.svg(`<path d="M50,50 L50,90" class="svg-stroke"/>`)], correct: Graphics.svg(`<path d="M50,50 L10,50" class="svg-stroke"/>`), logic: "O ponteiro gira 90 graus no sentido horário.", distractors: [Graphics.svg(`<path d="M50,50 L90,90" class="svg-stroke"/>`), Graphics.svg(`<path d="M50,50 L50,10" class="svg-stroke"/>`), Graphics.svg(Graphics.cross())] },
+        { seq: [Graphics.svg(Graphics.rect(true)), Graphics.svg(Graphics.circle(false)), Graphics.svg(Graphics.rect(true))], correct: Graphics.svg(Graphics.circle(false)), logic: "Padrão alternado ABAB: Quadrado Cheio, Círculo Vazio...", distractors: [Graphics.svg(Graphics.rect(false)), Graphics.svg(Graphics.circle(true)), Graphics.svg(Graphics.triangle())] },
+        { seq: [Graphics.svg(Graphics.grid([0])), Graphics.svg(Graphics.grid([4])), Graphics.svg(Graphics.grid([8]))], correct: Graphics.svg(Graphics.grid([4])), logic: "O ponto move-se pela diagonal e 'quica' ao chegar no final (0 -> 4 -> 8 -> 4).", distractors: [Graphics.svg(Graphics.grid([0])), Graphics.svg(Graphics.grid([5])), Graphics.svg(Graphics.grid([8]))] },
+        { seq: [Graphics.svg(Graphics.rect(false), 0), Graphics.svg(Graphics.diamond(true), 45), Graphics.svg(Graphics.rect(false), 90)], correct: Graphics.svg(Graphics.diamond(true), 135), logic: "Padrão complexo: 1. Alterna forma (Quadrado, Losango). 2. Alterna preenchimento (Vazio, Cheio). 3. Gira 45 graus continuamente.", distractors: [Graphics.svg(Graphics.rect(true), 135), Graphics.svg(Graphics.diamond(false), 90), Graphics.svg(Graphics.rect(false), 0)] }
+    ];
+
+    const app = {
+        currentIdx: 0,
+        score: 0,
+        timerInterval: null,
+        seconds: 0,
+        start: () => {
+            document.getElementById('iq-screen-intro').classList.remove('active');
+            document.getElementById('iq-screen-quiz').classList.add('active');
+            app.startTimer();
+            app.renderQuestion();
+        },
+        reset: () => {
+            app.currentIdx = 0;
+            app.score = 0;
+            app.seconds = 0;
+            document.getElementById('iq-screen-result').classList.remove('active');
+            document.getElementById('iq-screen-intro').classList.add('active');
+            document.getElementById('iq-timer').innerText = "00:00";
+        },
+        startTimer: () => {
+            app.timerInterval = setInterval(() => {
+                app.seconds++;
+                let m = Math.floor(app.seconds / 60).toString().padStart(2,'0');
+                let s = (app.seconds % 60).toString().padStart(2,'0');
+                document.getElementById('iq-timer').innerText = `${m}:${s}`;
+            }, 1000);
+        },
+        shuffle: (array) => array.sort(() => Math.random() - 0.5),
+        renderQuestion: () => {
+            const q = questions[app.currentIdx];
+            document.getElementById('iq-q-current').innerText = app.currentIdx + 1;
+            document.getElementById('iq-progress').style.width = `${(app.currentIdx / questions.length) * 100}%`;
+            const puzContainer = document.getElementById('puzzle-display');
+            puzContainer.innerHTML = '';
+            q.seq.forEach(svg => { let div = document.createElement('div'); div.className = 'shape-box'; div.innerHTML = svg; puzContainer.appendChild(div); });
+            let qBox = document.createElement('div'); qBox.className = 'shape-box question'; qBox.innerText = '?'; puzContainer.appendChild(qBox);
+            const optContainer = document.getElementById('options-display');
+            optContainer.innerHTML = '';
+            let opts = q.distractors.map(svg => ({ svg, isCorrect: false }));
+            opts.push({ svg: q.correct, isCorrect: true });
+            opts = app.shuffle(opts);
+            opts.forEach(opt => {
+                let btn = document.createElement('div'); btn.className = 'option-btn'; btn.innerHTML = opt.svg;
+                if(opt.isCorrect) btn.dataset.correct = "true";
+                btn.onclick = () => app.handleSelection(btn, opt.isCorrect, q.logic);
+                optContainer.appendChild(btn);
+            });
+        },
+        handleSelection: (el, isCorrect, logic) => {
+            const opts = document.querySelectorAll('#iq-test-view .option-btn');
+            opts.forEach(o => o.classList.add('disabled-interactions'));
+            if(isCorrect) { el.classList.add('correct'); app.score++; app.showFeedback(true, "Resposta Correta!", logic); }
+            else { el.classList.add('wrong'); document.querySelector('#iq-test-view .option-btn[data-correct="true"]').classList.add('correct'); app.showFeedback(false, "Resposta Incorreta", logic); }
+        },
+        showFeedback: (success, title, text) => {
+            const overlay = document.getElementById('iq-feedback-overlay');
+            const modal = document.getElementById('iq-feedback-modal');
+            const fbTitle = document.getElementById('fb-title');
+            const fbIcon = document.getElementById('fb-icon');
+            overlay.style.display = 'block'; modal.style.display = 'block';
+            fbTitle.innerText = title; fbTitle.style.color = success ? '#27ae60' : '#c0392b'; fbIcon.innerText = success ? '✅' : '❌';
+            document.getElementById('fb-text').innerHTML = `<strong>Lógica:</strong> ${text}`;
+        },
+        next: () => {
+            document.getElementById('iq-feedback-overlay').style.display = 'none';
+            document.getElementById('iq-feedback-modal').style.display = 'none';
+            app.currentIdx++;
+            if(app.currentIdx < questions.length) { app.renderQuestion(); } else { app.finish(); }
+        },
+        finish: () => {
+            clearInterval(app.timerInterval);
+            document.getElementById('iq-screen-quiz').classList.remove('active');
+            document.getElementById('iq-screen-result').classList.add('active');
+            document.getElementById('iq-progress').style.width = '100%';
+            let raw = app.score;
+            let iq = 0;
+            if(raw <= 5) iq = 75; else if (raw <= 10) iq = 85 + ((raw-5) * 3); else if (raw <= 15) iq = 100 + ((raw-10) * 4); else iq = 120 + ((raw-15) * 5);
+            document.getElementById('iq-score').innerText = iq;
+            document.getElementById('iq-raw-score').innerText = raw;
+            let label = "";
+            if(iq >= 130) label = "Superdotado / Genialidade"; else if(iq >= 120) label = "Inteligência Superior"; else if(iq >= 110) label = "Média Alta"; else if(iq >= 90) label = "Média"; else label = "Abaixo da Média";
+            document.getElementById('iq-class').innerText = label;
+            drawBellCurve(iq);
+        }
+    };
+
+    function drawBellCurve(userIQ) {
+        const canvas = document.getElementById('bell-curve');
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.parentElement.offsetWidth;
+        canvas.height = canvas.parentElement.offsetHeight;
+        const width = canvas.width;
+        const height = canvas.height;
+        const mean = 100; const sd = 15;
+        const gaussian = (x) => { return (1 / (sd * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mean) / sd, 2)); };
+        ctx.beginPath(); ctx.moveTo(0, height);
+        let maxY = gaussian(mean);
+        const minX = 55; const maxX = 145;
+        for(let i = 0; i <= width; i++) { let xVal = minX + (i / width) * (maxX - minX); let yVal = gaussian(xVal); let plotY = height - 20 - (yVal / maxY) * (height - 40); ctx.lineTo(i, plotY); }
+        ctx.strokeStyle = '#2c3e50'; ctx.lineWidth = 3; ctx.stroke();
+        ctx.lineTo(width, height); ctx.lineTo(0, height); ctx.fillStyle = 'rgba(52, 152, 219, 0.1)'; ctx.fill();
+        let meanX = ((mean - minX) / (maxX - minX)) * width; ctx.beginPath(); ctx.moveTo(meanX, 20); ctx.lineTo(meanX, height); ctx.setLineDash([5, 5]); ctx.strokeStyle = '#95a5a6'; ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle = '#7f8c8d'; ctx.font = '12px Arial'; ctx.fillText("Média (100)", meanX + 5, height - 10);
+        let clampedIQ = Math.max(minX, Math.min(maxX, userIQ)); let userX = ((clampedIQ - minX) / (maxX - minX)) * width;
+        ctx.beginPath(); ctx.moveTo(userX, 20); ctx.lineTo(userX, height); ctx.strokeStyle = '#e74c3c'; ctx.lineWidth = 2; ctx.stroke();
+        let userY = gaussian(clampedIQ); let plotUserY = height - 20 - (userY / maxY) * (height - 40);
+        ctx.beginPath(); ctx.arc(userX, plotUserY, 8, 0, 2 * Math.PI); ctx.fillStyle = '#e74c3c'; ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#c0392b'; ctx.font = 'bold 14px Arial'; ctx.fillText(`Você (${userIQ})`, userX + 10, plotUserY);
     }
 </script>
 </body>
