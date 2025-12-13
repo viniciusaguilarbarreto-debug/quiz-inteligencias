@@ -15,7 +15,7 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <style>
-        /* (Mantive o CSS idêntico para economizar espaço visual, pois está correto) */
+        /* (CSS Base mantido) */
         :root { --primary: #667eea; --accent: #764ba2; --glass: rgba(255, 255, 255, 0.95); --text: #2d3748; }
         body { font-family: 'Outfit', sans-serif; margin: 0; padding: 0; color: var(--text); overflow-x: hidden; background-color: #333; min-height: 100vh; }
         #bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); transition: background 1s ease; }
@@ -85,6 +85,29 @@
         .mascot-ring { position: absolute; top: -4px; left: -4px; right: -4px; bottom: -4px; border-radius: 50%; border: 4px solid transparent; border-top-color: var(--primary); transition: transform 0.2s linear; }
         .hidden { display: none !important; }
         .loader { border: 3px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; margin: 0 auto;}
+        
+        /* ESTILOS DA ÁREA DE HISTÓRICO */
+        #history-view { display: none; padding-top: 20px; animation: fadeIn 0.5s ease; }
+        .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; color: white; }
+        .history-header h2 { font-family: 'Fredoka', sans-serif; font-size: 2rem; margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        .btn-back-history { background: rgba(255,255,255,0.2); border: none; color: white; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-family: 'Outfit', sans-serif; transition: 0.2s; backdrop-filter: blur(5px); }
+        .btn-back-history:hover { background: white; color: var(--accent); }
+        
+        .history-list { display: flex; flex-direction: column; gap: 15px; }
+        .history-card { background: var(--glass); border-radius: 16px; padding: 20px; display: flex; align-items: center; justify-content: space-between; transition: transform 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .history-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+        .hc-left { display: flex; align-items: center; gap: 15px; }
+        .hc-icon { font-size: 2.5rem; background: #f0f4f8; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #e2e8f0; }
+        .hc-info { display: flex; flex-direction: column; }
+        .hc-result { font-weight: 700; font-size: 1.1rem; color: var(--accent); font-family: 'Fredoka', sans-serif; }
+        .hc-date { font-size: 0.85rem; color: #718096; margin-top: 4px; }
+        .hc-score-badge { background: var(--primary); color: white; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: 600; }
+        
+        .empty-history { text-align: center; color: rgba(255,255,255,0.8); margin-top: 50px; font-size: 1.2rem; }
+        
+        .btn-nav-history { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; margin-top: 10px; font-size: 0.9rem; margin-right: 10px; display: inline-flex; align-items: center; gap: 5px; transition: 0.2s; }
+        .btn-nav-history:hover { background: white; color: var(--accent); }
+
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -181,7 +204,10 @@
                 <header>
                     <h1 style="font-size: 2.5rem;">Mapeamento<br>Mental</h1>
                     <p>Responda para descobrir seu perfil</p>
-                    <button style="background:none; border:1px solid rgba(255,255,255,0.5); color:white; padding:5px 15px; border-radius:20px; cursor:pointer; margin-top:10px;" onclick="logout()">Sair / Logout</button>
+                    <div style="margin-top:10px;">
+                        <button class="btn-nav-history" onclick="openHistory()">📜 Histórico</button>
+                        <button style="background:none; border:1px solid rgba(255,255,255,0.5); color:white; padding:7px 15px; border-radius:20px; cursor:pointer;" onclick="logout()">Sair / Logout</button>
+                    </div>
                 </header>
                 <form id="quiz-form"></form>
                 <div class="final-area">
@@ -191,6 +217,19 @@
                     <button type="button" class="btn-finish" id="btn-submit" onclick="finalizar()">GERAR GRÁFICO 📊</button>
                 </div>
             </div>
+
+            <!-- NOVA ÁREA DE HISTÓRICO -->
+            <div id="history-view">
+                <div class="history-header">
+                    <h2>Meus Resultados</h2>
+                    <button class="btn-back-history" onclick="closeHistory()">← Voltar ao Quiz</button>
+                </div>
+                <div id="history-list-container" class="history-list">
+                    <!-- Os itens serão injetados aqui via JS -->
+                    <div class="loader" style="margin-top: 50px;"></div>
+                </div>
+            </div>
+
             <div id="result-view">
                 <div class="result-box" id="print-area">
                     <div class="res-header">
@@ -204,6 +243,7 @@
                         <div class="actions-row">
                             <button class="btn-whatsapp" onclick="shareWhatsapp()"><span>💬 Compartilhar Resultado</span></button>
                             <button class="btn-reset" onclick="resetQuiz()">🔄 Refazer Teste</button>
+                            <button class="btn-reset" onclick="openHistory()">📜 Ver Histórico</button>
                         </div>
                     </div>
                 </div>
@@ -486,6 +526,7 @@
         const btn = document.getElementById('btn-submit'); btn.innerHTML = "GERAR GRÁFICO 📊"; btn.disabled = false;
         document.getElementById('progress-ring').style.transform = "rotate(0deg)";
         document.getElementById('result-view').style.display = 'none';
+        document.getElementById('history-view').style.display = 'none'; // Garante fechar histórico
         document.getElementById('quiz-view').style.display = 'block';
         document.getElementById('quiz-view').scrollIntoView({ behavior: 'instant', block: 'start' });
     };
@@ -495,6 +536,68 @@
         const text = `Fiz o Mapeamento de Inteligências e meu resultado dominante foi: *${title}*! 🧠✨\n\nDescubra o seu aqui: ${window.location.href}`;
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
     };
+
+    // ==========================================
+    // LÓGICA DO HISTÓRICO
+    // ==========================================
+
+    async function openHistory() {
+        const listContainer = document.getElementById('history-list-container');
+        listContainer.innerHTML = '<div class="loader" style="margin-top: 50px;"></div>';
+
+        document.getElementById('quiz-view').style.display = 'none';
+        document.getElementById('result-view').style.display = 'none';
+        document.getElementById('history-view').style.display = 'block';
+        window.scrollTo(0,0);
+
+        try {
+            // Chama API pedindo histórico para o usuário atual
+            const res = await sendToSheet({ action: 'get_history', email: currentUser });
+            
+            if(res.status === 'success' && res.data && res.data.length > 0) {
+                renderHistory(res.data);
+            } else {
+                listContainer.innerHTML = '<div class="empty-history">Nenhum teste realizado ainda. 👻</div>';
+            }
+        } catch(e) {
+            console.error(e);
+            listContainer.innerHTML = '<div class="empty-history">Erro ao carregar histórico. Tente novamente.</div>';
+        }
+    }
+
+    function renderHistory(data) {
+        const listContainer = document.getElementById('history-list-container');
+        listContainer.innerHTML = '';
+
+        // Inverte a ordem para mostrar o mais recente primeiro (caso o sheet mande o mais antigo primeiro)
+        const reversedData = [...data].reverse();
+
+        reversedData.forEach(item => {
+            // Tenta encontrar o emoji correspondente no array 'dados'
+            const intelInfo = dados.find(d => d.nome.toLowerCase() === item.resultado.toLowerCase()) || { emoji: '🧠' };
+            
+            const card = document.createElement('div');
+            card.className = 'history-card';
+            card.innerHTML = `
+                <div class="hc-left">
+                    <div class="hc-icon">${intelInfo.emoji}</div>
+                    <div class="hc-info">
+                        <div class="hc-result">${item.resultado}</div>
+                        <div class="hc-date">${item.data || 'Data desconhecida'}</div>
+                    </div>
+                </div>
+                <div class="hc-right">
+                    <div class="hc-score-badge">Dominante</div>
+                </div>
+            `;
+            listContainer.appendChild(card);
+        });
+    }
+
+    function closeHistory() {
+        document.getElementById('history-view').style.display = 'none';
+        document.getElementById('quiz-view').style.display = 'block';
+    }
 </script>
 </body>
 </html>
