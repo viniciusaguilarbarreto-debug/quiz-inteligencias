@@ -404,15 +404,105 @@
 
     // --- QUIZ & CHARTS ---
     let myRadarChart = null;
+    
+    // ATUALIZAÇÃO: Perguntas baseadas em contexto e cenários reais, não apenas autoavaliação
     const dados = [
-        { nome: 'Linguística', emoji: '🗣️', cor: ['#4facfe', '#00f2fe'], qs: ["Tenho facilidade em expressar minhas ideias de forma clara?", "Gosto de aprender novas palavras?", "Aprecio jogos que envolvem palavras?", "Costumo ler livros por prazer?", "Tenho habilidade para contar histórias?"] },
-        { nome: 'Lógica', emoji: '🧮', cor: ['#43e97b', '#38f9d7'], qs: ["Gosto de resolver problemas passo a passo?", "Sinto satisfação em organizar listas?", "Pergunto 'por que' as coisas funcionam?", "Facilidade com cálculo mental?", "Identifico padrões lógicos?"] },
-        { nome: 'Visual', emoji: '🎨', cor: ['#fa709a', '#fee140'], qs: ["Visualizo objetos em 3D mentalmente?", "Facilidade para ler mapas?", "Prefiro materiais com imagens?", "Tenho bom senso de direção?", "Aprecio design e harmonia?"] },
-        { nome: 'Cinestésica', emoji: '🏃', cor: ['#fccb90', '#d57eeb'], qs: ["Prefiro aprender fazendo?", "Dificuldade em ficar parado?", "Uso gestos ao falar?", "Boa coordenação motora?", "Gosto de trabalhos manuais?"] },
-        { nome: 'Musical', emoji: '🎵', cor: ['#e0c3fc', '#8ec5fc'], qs: ["Músicas ficam na cabeça?", "Percebo desafinação?", "Música muda meu humor?", "Acompanho ritmos facilmente?", "Identifico instrumentos?"] },
-        { nome: 'Interpessoal', emoji: '🤝', cor: ['#ff9a9e', '#fecfef'], qs: ["Amigos pedem conselhos?", "Prefiro trabalhar em equipe?", "Percebo sentimentos pela expressão?", "Energizado em eventos sociais?", "Facilidade em mediar conflitos?"] },
-        { nome: 'Intrapessoal', emoji: '🧘', cor: ['#a18cd1', '#fbc2eb'], qs: ["Valorizo momentos de solidão?", "Clareza sobre pontos fortes?", "Gosto de autoconhecimento?", "Sou independente?", "Prefiro hobbies solitários?"] },
-        { nome: 'Naturalista', emoji: '🌿', cor: ['#84fab0', '#8fd3f4'], qs: ["Renovado em contato com a natureza?", "Observo detalhes em plantas?", "Gosto de cuidar de jardins/animais?", "Preocupo-me com meio ambiente?", "Percebo mudanças no clima?"] }
+        { 
+            nome: 'Linguística', 
+            emoji: '🗣️', 
+            cor: ['#4facfe', '#00f2fe'], 
+            qs: [
+                "Quando leio um artigo ou livro, costumo parar para pesquisar ou deduzir o significado de palavras desconhecidas?", 
+                "Ao explicar um conceito novo para um amigo, eu consigo encontrar as palavras certas rapidamente?", 
+                "Em uma discussão, percebo nuances no que foi dito e consigo usar argumentos precisos para responder?", 
+                "Se tenho tempo livre em uma sala de espera, prefiro ler algo a ficar apenas observando o ambiente?", 
+                "Quando conto uma história sobre meu dia, as pessoas costumam prestar atenção e entender os detalhes?"
+            ] 
+        },
+        { 
+            nome: 'Lógica', 
+            emoji: '🧮', 
+            cor: ['#43e97b', '#38f9d7'], 
+            qs: [
+                "Diante de um problema complexo no trabalho/estudo, minha primeira reação é quebrá-lo em etapas menores?", 
+                "Ao organizar minhas finanças ou tarefas, sinto satisfação em criar listas categorizadas ou planilhas?", 
+                "Quando algo quebra (computador, carro), tento investigar a causa raiz antes de chamar ajuda?", 
+                "Ao dividir a conta do restaurante com amigos, calculo minha parte mentalmente antes de usar a calculadora?", 
+                "Consigo identificar padrões em jogos de estratégia ou em comportamentos repetitivos?"
+            ] 
+        },
+        { 
+            nome: 'Visual', 
+            emoji: '🎨', 
+            cor: ['#fa709a', '#fee140'], 
+            qs: [
+                "Ao comprar um móvel novo, consigo imaginar exatamente como ele ficará na sala antes mesmo de medir?", 
+                "Se o GPS falha em um lugar desconhecido, consigo me orientar lembrando do mapa que vi antes?", 
+                "Quando estudo, prefiro diagramas, gráficos e vídeos a apenas texto corrido?", 
+                "Consigo montar objetos (lego, móveis) apenas olhando as figuras do manual, sem ler muito?", 
+                "Ao entrar em um ambiente, noto imediatamente se as cores ou a disposição dos objetos estão desarmônicas?"
+            ] 
+        },
+        { 
+            nome: 'Cinestésica', 
+            emoji: '🏃', 
+            cor: ['#fccb90', '#d57eeb'], 
+            qs: [
+                "Ao comprar um aparelho novo, prefiro começar a mexer nele imediatamente em vez de ler o manual todo?", 
+                "Tenho dificuldade em permanecer sentado na mesma posição por longos períodos sem me alongar ou levantar?", 
+                "Quando estou explicando algo empolgante, percebo que movimento muito minhas mãos e corpo?", 
+                "Tenho facilidade em aprender movimentos físicos (dança, esportes, manuseio de ferramentas) apenas observando?", 
+                "Sinto que penso melhor ou tenho ideias mais criativas quando estou caminhando ou fazendo atividade física?"
+            ] 
+        },
+        { 
+            nome: 'Musical', 
+            emoji: '🎵', 
+            cor: ['#e0c3fc', '#8ec5fc'], 
+            qs: [
+                "Enquanto realizo tarefas automáticas, frequentemente me pego cantarolando ou batucando um ritmo?", 
+                "Se alguém canta 'Parabéns pra Você' fora do tom, isso me incomoda ou chama minha atenção imediatamente?", 
+                "Consigo identificar que música está tocando apenas ouvindo os primeiros segundos da introdução?", 
+                "Quando ouço uma música, consigo isolar mentalmente um instrumento (só a bateria ou só o baixo)?", 
+                "Minha memória está fortemente ligada a músicas (lembro de melodias de anos atrás com facilidade)?"
+            ] 
+        },
+        { 
+            nome: 'Interpessoal', 
+            emoji: '🤝', 
+            cor: ['#ff9a9e', '#fecfef'], 
+            qs: [
+                "Quando um grupo de amigos não consegue decidir onde jantar, costumo assumir a liderança para chegar a um consenso?", 
+                "Prefiro estudar ou realizar projetos em grupo, pois sinto que a troca de ideias enriquece o resultado?", 
+                "Ao entrar em uma sala, consigo perceber rapidamente se o clima está tenso ou alegre apenas olhando para as pessoas?", 
+                "Sinto-me energizado após passar tempo conversando em eventos sociais, em vez de drenado?", 
+                "Meus amigos ou colegas costumam me procurar quando precisam desabafar ou resolver conflitos pessoais?"
+            ] 
+        },
+        { 
+            nome: 'Intrapessoal', 
+            emoji: '🧘', 
+            cor: ['#a18cd1', '#fbc2eb'], 
+            qs: [
+                "Após uma semana muito agitada, sinto necessidade real de ficar sozinho para 'recarregar as baterias'?", 
+                "Tenho clareza sobre quais são meus pontos fortes e fracos sem precisar que outros me digam?", 
+                "Quando cometo um erro, costumo refletir internamente sobre o que me levou a agir daquela forma?", 
+                "Tomo decisões importantes baseadas nos meus próprios valores, mesmo que vão contra a opinião da maioria?", 
+                "Tenho hobbies ou interesses que gosto de praticar sozinho, sem a necessidade de companhia?"
+            ] 
+        },
+        { 
+            nome: 'Naturalista', 
+            emoji: '🌿', 
+            cor: ['#84fab0', '#8fd3f4'], 
+            qs: [
+                "Se tiver que escolher um destino de férias, prefiro um local com paisagens naturais a um centro urbano movimentado?", 
+                "Ao caminhar na rua, noto diferenças nas árvores, pássaros ou mudanças no tempo que outras pessoas ignoram?", 
+                "Tenho facilidade ou interesse genuíno em cuidar de plantas ou entender o comportamento de animais?", 
+                "Sinto desconforto físico ou mental quando passo muitos dias fechado em ambientes artificiais (ar condicionado, luz fria)?", 
+                "Consigo perceber padrões na natureza, como a mudança das estações ou tipos de nuvens, com facilidade?"
+            ] 
+        }
     ];
 
     const form = document.getElementById('quiz-form');
